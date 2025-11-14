@@ -9,6 +9,7 @@ api_paste_confg = {{ snap_paths.common }}/etc/cinder/api-paste.ini
 debug = {{ settings.debug }}
 use_syslog = True
 auth_strategy = keystone
+enable_unsupported_driver = True
 state_path = {{ snap_paths.common }}/lib/cinder
 transport_url = {{ rabbitmq.url }}
 cinder_internal_tenant_project_id = {{ cinder.project_id }}
