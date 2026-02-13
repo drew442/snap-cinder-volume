@@ -7,6 +7,8 @@ This module holds the definition of all configuration options the snap
 takes as input from `snap set`.
 """
 
+import typing
+
 import pydantic
 import pydantic.alias_generators
 from pydantic import Field
@@ -176,11 +178,17 @@ class DellSCConfiguration(BaseBackendConfiguration):
     )
 
     # Core required fields
-    san_ip: pydantic.IPvAnyAddress  # Dell Storage Center management IP/FQDN
-    san_login: str  # SAN management username
-    san_password: str  # SAN management password
-    dell_sc_ssn: int = Field(default=64702)  # Storage Center System Serial Number
+    san_ip: pydantic.IPvAnyAddress  # Dell DSM management IP/FQDN
+    san_login: str  # DSM management username
+    san_password: str  # DSM management password
+    dell_sc_ssn: int  # Storage Center System Serial Number
     protocol: str = Field(default="fc", pattern="^(iscsi|fc)$")
+    enable_unsupported_driver: typing.Literal[True]
+
+    # Optional secondary DSM settings
+    secondary_san_ip: pydantic.IPvAnyAddress | None = None
+    secondary_san_login: str | None = None
+    secondary_san_password: str | None = None
 
 
 class DellpowerstoreConfiguration(BaseBackendConfiguration):
