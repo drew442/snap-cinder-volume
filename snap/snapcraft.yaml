@@ -130,3 +130,4 @@ plugs:
     interface: system-files
     read:
       - /etc/lvm/lvm.conf
+      - /etc/lvm/lvmlocal.conf
