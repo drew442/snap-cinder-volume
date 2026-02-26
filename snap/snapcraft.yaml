@@ -130,8 +130,7 @@ plugs:
   etc-lvm:
     interface: system-files
     read:
-      - /etc/lvm/lvm.conf
-      - /etc/lvm/lvmlocal.conf
+      - /etc/lvm
   run-lock-lvm:
     interface: system-files
     write:
