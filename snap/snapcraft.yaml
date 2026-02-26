@@ -55,6 +55,7 @@ apps:
       - etc-iscsi
       - etc-tgt
       - etc-lvm
+      - run-lock-lvm
 
 parts:
   openstack:
@@ -131,3 +132,7 @@ plugs:
     read:
       - /etc/lvm/lvm.conf
       - /etc/lvm/lvmlocal.conf
+  run-lock-lvm:
+    interface: system-files
+    write:
+      - /run/lock/lvm
