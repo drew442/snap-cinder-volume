@@ -54,6 +54,7 @@ apps:
       - dm-multipath
       - etc-iscsi
       - etc-tgt
+      - etc-lvm
 
 parts:
   openstack:
@@ -125,3 +126,7 @@ plugs:
     interface: system-files
     write:
       - /etc/tgt
+  etc-lvm:
+    interface: system-files
+    read:
+      - /etc/lvm/lvm.conf

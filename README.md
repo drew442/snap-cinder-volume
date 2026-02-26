@@ -106,7 +106,7 @@ Configure one or more LVM backends using the `lvm.<backend-name>.*` namespace:
 
 **Core settings:**
 * `lvm.<backend-name>.lvm-type`             (`auto`) LVM type: `default`, `thin`, or `auto`
-* `lvm.<backend-name>.lvm-conf-file`        (`{{ snap_paths.common }}/etc/cinder/lvm.conf`) LVM config file path
+* `lvm.<backend-name>.lvm-conf-file`        (`/etc/lvm/lvm.conf`) LVM config file path
 * `lvm.<backend-name>.lvm-mirrors`          (0) Mirror count for LVs
 * `lvm.<backend-name>.lvm-share-target`     (false) Share a single target for all LUNs
 

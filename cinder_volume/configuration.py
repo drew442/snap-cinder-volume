@@ -133,7 +133,7 @@ class LvmConfiguration(BaseBackendConfiguration):
     # Core LVM driver settings
     lvm_type: str = Field(default="auto", pattern="^(default|thin|auto)$")
     lvm_mirrors: int = 0
-    lvm_conf_file: str = r"{{ snap_paths.common }}/etc/cinder/lvm.conf"
+    lvm_conf_file: str = "/etc/lvm/lvm.conf"
     lvm_suppress_fd_warnings: bool = False
     lvm_share_target: bool = False
 
