@@ -97,7 +97,7 @@ class BaseBackendConfiguration(ParentConfig):
     image_volume_cache_enabled: bool | None = None
     image_volume_cache_max_size_gb: int | None = None
     image_volume_cache_max_count: int | None = None
-    volume_dd_blocksize: int = Field(default=4096, ge=512)
+    volume_dd_blocksize: int | str = Field(default=4096, ge=512)
     volume_backend_name: str
     driver_ssl_cert: str | None = None
 
