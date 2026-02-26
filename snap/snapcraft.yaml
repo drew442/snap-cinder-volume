@@ -49,10 +49,13 @@ apps:
       - hardware-observe
       - log-observe
       - process-control
+      - kernel-module-control
       - nvme-control
       - iscsi-initiator
       - dm-multipath
       - etc-iscsi
+      - etc-tgt
+      - sys-kernel-config
 
 parts:
   openstack:
@@ -67,6 +70,7 @@ parts:
       - ceph-common
       - nfs-common
       - tgt
+      - nvmetcli
       - util-linux
       - nvme-cli
       - multipath-tools
@@ -120,3 +124,11 @@ plugs:
     interface: system-files
     write:
       - /etc/iscsi
+  etc-tgt:
+    interface: system-files
+    write:
+      - /etc/tgt
+  sys-kernel-config:
+    interface: system-files
+    write:
+      - /sys/kernel/config

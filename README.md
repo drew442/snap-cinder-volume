@@ -96,6 +96,45 @@ Configure one or more Ceph backends using the `ceph.<backend-name>.*` namespace:
 
 You may define multiple backends by using different backend names, e.g. `ceph.ceph1.*`, `ceph.ssdpool.*`, etc. Each backend name must be unique and each pool must only be used by one backend.
 
+### lvm (backend)
+
+Configure one or more LVM backends using the `lvm.<backend-name>.*` namespace:
+
+**Required options:**
+* `lvm.<backend-name>.volume-backend-name`  Unique name for this backend
+* `lvm.<backend-name>.volume-group`         Name of the LVM volume group
+
+**Core settings:**
+* `lvm.<backend-name>.lvm-type`             (`auto`) LVM type: `default`, `thin`, or `auto`
+* `lvm.<backend-name>.lvm-conf-file`        (`{{ snap_paths.common }}/etc/cinder/lvm.conf`) LVM config file path
+* `lvm.<backend-name>.lvm-mirrors`          (0) Mirror count for LVs
+* `lvm.<backend-name>.lvm-share-target`     (false) Share a single target for all LUNs
+
+**Target / transport:**
+* `lvm.<backend-name>.target-protocol`      (`iscsi`) Protocol: `iscsi`, `iser`, `nvmet_rdma`, `nvmet_tcp`
+* `lvm.<backend-name>.target-helper`        (`tgtadm`) Target helper: `tgtadm`, `nvmet`, `lioadm`, `scstadmin`, `iscsictl`, `spdk-nvmeof`
+* `lvm.<backend-name>.target-ip-address`    (`$my_ip`) IP address for the target
+* `lvm.<backend-name>.target-port`          (3260) Target port
+* `lvm.<backend-name>.target-prefix`        (`iqn.2010-10.org.openstack:`) iSCSI/NVMe-oF target prefix
+
+**Example (iSCSI):**
+```bash
+sudo snap set cinder-volume \
+  lvm.lvm0.volume-backend-name=lvm0 \
+  lvm.lvm0.volume-group=cinder-volumes \
+  lvm.lvm0.target-protocol=iscsi \
+  lvm.lvm0.target-helper=tgtadm
+```
+
+**Example (NVMe-oF / nvmet):**
+```bash
+sudo snap set cinder-volume \
+  lvm.nvme0.volume-backend-name=nvme0 \
+  lvm.nvme0.volume-group=cinder-volumes \
+  lvm.nvme0.target-protocol=nvmet_tcp \
+  lvm.nvme0.target-helper=nvmet
+```
+
 ### hitachi (backend)
 
 Configure one or more Hitachi VSP backends using the `hitachi.<backend-name>.*` namespace:

@@ -116,6 +116,70 @@ class CephConfiguration(BaseBackendConfiguration):
     rbd_key: str
 
 
+class LvmConfiguration(BaseBackendConfiguration):
+    """All options recognised by the **LVM** Cinder driver."""
+
+    model_config = pydantic.ConfigDict(
+        extra="allow",  # Allow extra fields not defined in the model
+        alias_generator=pydantic.AliasGenerator(
+            validation_alias=to_kebab,
+            serialization_alias=pydantic.alias_generators.to_snake,
+        ),
+    )
+
+    # Required
+    volume_group: str
+
+    # Core LVM driver settings
+    lvm_type: str = Field(default="auto", pattern="^(default|thin|auto)$")
+    lvm_mirrors: int = 0
+    lvm_conf_file: str = r"{{ snap_paths.common }}/etc/cinder/lvm.conf"
+    lvm_suppress_fd_warnings: bool = False
+    lvm_share_target: bool = False
+
+    # Target / transport settings
+    target_helper: str = Field(
+        default="tgtadm",
+        pattern="^(tgtadm|lioadm|scstadmin|iscsictl|nvmet|spdk-nvmeof|fake)$",
+    )
+    target_protocol: str = Field(
+        default="iscsi", pattern="^(iscsi|iser|nvmet_rdma|nvmet_tcp)$"
+    )
+    target_ip_address: str = "$my_ip"
+    target_port: int = 3260
+    target_prefix: str = "iqn.2010-10.org.openstack:"
+    target_secondary_ip_addresses: str | None = None
+
+    # iSCSI settings (tgtadm)
+    iscsi_iotype: str = Field(default="fileio", pattern="^(blockio|fileio|auto)$")
+    iscsi_target_flags: str = ""
+    iscsi_write_cache: str = Field(default="on", pattern="^(on|off)$")
+
+    # NVMe-oF settings
+    nvmet_port_id: int = 1
+    nvmet_ns_id: int = 10
+
+    # SCST settings
+    scst_target_driver: str = "iscsi"
+    scst_target_iqn_name: str | None = None
+
+    # SPDK settings
+    spdk_rpc_ip: str | None = None
+    spdk_rpc_port: int = 8000
+    spdk_rpc_username: str | None = None
+    spdk_rpc_password: str | None = None
+    spdk_max_queue_depth: int = 64
+
+    # Capacity and clearing
+    volume_clear: str = Field(default="zero", pattern="^(none|zero)$")
+    volume_clear_size: int = 0
+    volume_clear_ionice: str | None = None
+    volume_dd_blocksize: str = "1M"
+    reserved_percentage: int = 0
+    max_over_subscription_ratio: str = "20.0"
+    volumes_dir: str = r"{{ snap_paths.common }}/lib/cinder/volumes"
+
+
 class HitachiConfiguration(BaseBackendConfiguration):
     """All options recognised by the **Hitachi VSP** Cinder driver.
 
@@ -220,6 +284,7 @@ class Configuration(BaseConfiguration):
     """
 
     ceph: dict[str, CephConfiguration] = {}
+    lvm: dict[str, LvmConfiguration] = {}
     hitachi: dict[str, HitachiConfiguration] = {}
     pure: dict[str, PureConfiguration] = {}
     dellsc: dict[str, DellSCConfiguration] = {}
@@ -234,9 +299,11 @@ class Configuration(BaseConfiguration):
         # Check all backend types for unique backend names
         for backend_type, backends in [
             ("ceph", self.ceph),
+            ("lvm", self.lvm),
             ("hitachi", self.hitachi),
             ("pure", self.pure),
             ("dellsc", self.dellsc),
+            ("dellpowerstore", self.dellpowerstore),
         ]:
             for backend_key, backend in backends.items():
                 # Check for duplicate backend names across all types

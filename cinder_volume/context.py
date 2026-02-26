@@ -258,6 +258,27 @@ class CephBackendContext(BaseBackendContext):
         ]
 
 
+class LvmBackendContext(BaseBackendContext):
+    """Render an LVM backend stanza."""
+
+    def __init__(self, backend_name: str, backend_config: dict):
+        """Initialize with backend name and config."""
+        super().__init__(backend_name, backend_config)
+        self.supports_cluster = False
+
+    def context(self) -> dict:
+        """Return context for LVM backend."""
+        context = dict(super().context())
+        context["volume_driver"] = "cinder.volume.drivers.lvm.LVMVolumeDriver"
+
+        target_protocol = context.get("target_protocol", "iscsi").lower()
+        target_helper = context.get("target_helper")
+        if target_protocol.startswith("nvmet") and target_helper in (None, "tgtadm"):
+            context["target_helper"] = "nvmet"
+
+        return context
+
+
 class HitachiBackendContext(BaseBackendContext):
     """Render a Hitachi VSP backend stanza."""
 

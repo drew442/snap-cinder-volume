@@ -152,3 +152,27 @@ class TestDellSCConfiguration:
         )
         assert str(config.san_ip) == "10.0.0.10"
         assert config.dell_sc_ssn == 64702
+
+
+class TestLvmConfiguration:
+    """Test the LVM backend configuration model."""
+
+    def test_lvm_requires_volume_group(self):
+        """volume-group is required for LVM backends."""
+        with pytest.raises(pydantic.ValidationError):
+            configuration.LvmConfiguration(
+                **{
+                    "volume-backend-name": "lvm0",
+                }
+            )
+
+    def test_lvm_accepts_basic_configuration(self):
+        """Test valid LVM backend configuration."""
+        config = configuration.LvmConfiguration(
+            **{
+                "volume-backend-name": "lvm0",
+                "volume-group": "cinder-volumes",
+            }
+        )
+        assert config.volume_backend_name == "lvm0"
+        assert config.volume_group == "cinder-volumes"
