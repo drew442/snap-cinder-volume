@@ -270,12 +270,6 @@ class LvmBackendContext(BaseBackendContext):
         """Return context for LVM backend."""
         context = dict(super().context())
         context["volume_driver"] = "cinder.volume.drivers.lvm.LVMVolumeDriver"
-
-        target_protocol = context.get("target_protocol", "iscsi").lower()
-        target_helper = context.get("target_helper")
-        if target_protocol.startswith("nvmet") and target_helper in (None, "tgtadm"):
-            context["target_helper"] = "nvmet"
-
         return context
 
 

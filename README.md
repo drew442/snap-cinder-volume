@@ -111,8 +111,8 @@ Configure one or more LVM backends using the `lvm.<backend-name>.*` namespace:
 * `lvm.<backend-name>.lvm-share-target`     (false) Share a single target for all LUNs
 
 **Target / transport:**
-* `lvm.<backend-name>.target-protocol`      (`iscsi`) Protocol: `iscsi`, `iser`, `nvmet_rdma`, `nvmet_tcp`
-* `lvm.<backend-name>.target-helper`        (`tgtadm`) Target helper: `tgtadm`, `nvmet`, `lioadm`, `scstadmin`, `iscsictl`, `spdk-nvmeof`
+* `lvm.<backend-name>.target-protocol`      (`iscsi`) Protocol: `iscsi`, `iser`
+* `lvm.<backend-name>.target-helper`        (`tgtadm`) Target helper: `tgtadm`, `lioadm`, `scstadmin`, `iscsictl`
 * `lvm.<backend-name>.target-ip-address`    (`$my_ip`) IP address for the target
 * `lvm.<backend-name>.target-port`          (3260) Target port
 * `lvm.<backend-name>.target-prefix`        (`iqn.2010-10.org.openstack:`) iSCSI/NVMe-oF target prefix
@@ -124,15 +124,6 @@ sudo snap set cinder-volume \
   lvm.lvm0.volume-group=cinder-volumes \
   lvm.lvm0.target-protocol=iscsi \
   lvm.lvm0.target-helper=tgtadm
-```
-
-**Example (NVMe-oF / nvmet):**
-```bash
-sudo snap set cinder-volume \
-  lvm.nvme0.volume-backend-name=nvme0 \
-  lvm.nvme0.volume-group=cinder-volumes \
-  lvm.nvme0.target-protocol=nvmet_tcp \
-  lvm.nvme0.target-helper=nvmet
 ```
 
 ### hitachi (backend)

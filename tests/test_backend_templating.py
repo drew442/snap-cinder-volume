@@ -340,19 +340,6 @@ class TestLvmBackendContext:
         rendered = lvm_ctx.cinder_context()
         assert rendered["volume_driver"] == "cinder.volume.drivers.lvm.LVMVolumeDriver"
 
-    def test_lvm_nvmet_sets_target_helper(self):
-        """Ensure nvmet protocol defaults target_helper to nvmet."""
-        lvm_ctx = context.LvmBackendContext(
-            "nvme0",
-            {
-                "volume_backend_name": "nvme0",
-                "volume_group": "cinder-volumes",
-                "target_protocol": "nvmet_tcp",
-            },
-        )
-        rendered = lvm_ctx.cinder_context()
-        assert rendered["target_helper"] == "nvmet"
-
 
 class TestBackendConditionals:
     """Test conditional logic for backend templates."""

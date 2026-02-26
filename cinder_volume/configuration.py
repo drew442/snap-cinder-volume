@@ -140,11 +140,9 @@ class LvmConfiguration(BaseBackendConfiguration):
     # Target / transport settings
     target_helper: str = Field(
         default="tgtadm",
-        pattern="^(tgtadm|lioadm|scstadmin|iscsictl|nvmet|spdk-nvmeof|fake)$",
+        pattern="^(tgtadm|lioadm|scstadmin|iscsictl|fake)$",
     )
-    target_protocol: str = Field(
-        default="iscsi", pattern="^(iscsi|iser|nvmet_rdma|nvmet_tcp)$"
-    )
+    target_protocol: str = Field(default="iscsi", pattern="^(iscsi|iser)$")
     target_ip_address: str = "$my_ip"
     target_port: int = 3260
     target_prefix: str = "iqn.2010-10.org.openstack:"
@@ -155,20 +153,9 @@ class LvmConfiguration(BaseBackendConfiguration):
     iscsi_target_flags: str = ""
     iscsi_write_cache: str = Field(default="on", pattern="^(on|off)$")
 
-    # NVMe-oF settings
-    nvmet_port_id: int = 1
-    nvmet_ns_id: int = 10
-
     # SCST settings
     scst_target_driver: str = "iscsi"
     scst_target_iqn_name: str | None = None
-
-    # SPDK settings
-    spdk_rpc_ip: str | None = None
-    spdk_rpc_port: int = 8000
-    spdk_rpc_username: str | None = None
-    spdk_rpc_password: str | None = None
-    spdk_max_queue_depth: int = 64
 
     # Capacity and clearing
     volume_clear: str = Field(default="zero", pattern="^(none|zero)$")
