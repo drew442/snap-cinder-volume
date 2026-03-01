@@ -96,6 +96,35 @@ Configure one or more Ceph backends using the `ceph.<backend-name>.*` namespace:
 
 You may define multiple backends by using different backend names, e.g. `ceph.ceph1.*`, `ceph.ssdpool.*`, etc. Each backend name must be unique and each pool must only be used by one backend.
 
+### lvm-san (backend)
+
+Configure one or more LVM SAN backends using the `lvm-san.<backend-name>.*` namespace:
+
+**Required options:**
+* `lvm-san.<backend-name>.volume-backend-name`  Unique backend name exposed to Cinder
+* `lvm-san.<backend-name>.volume-group`         LVM volume group name on the active storage node
+* `lvm-san.<backend-name>.iscsi-ip-address`     Stable iSCSI portal VIP for this backend
+
+**Optional/common options:**
+* `lvm-san.<backend-name>.volume-driver`              (default `cinder.volume.drivers.lvm.LVMVolumeDriver`)
+* `lvm-san.<backend-name>.target-protocol`            (default `iscsi`)
+* `lvm-san.<backend-name>.target-helper`              (default `lioadm`)
+* `lvm-san.<backend-name>.lvm-type`                   (e.g. `thin`)
+* `lvm-san.<backend-name>.lvm-pool-name`              Thin pool name when `lvm-type=thin`
+* `lvm-san.<backend-name>.backend-availability-zone`  Optional backend availability zone
+
+**Example:**
+```bash
+sudo snap set cinder-volume \
+  lvm-san.backend-a.volume-backend-name=lvm-san.backend-a \
+  lvm-san.backend-a.volume-group=cinder-volumes \
+  lvm-san.backend-a.iscsi-ip-address=10.20.30.40 \
+  lvm-san.backend-a.target-protocol=iscsi \
+  lvm-san.backend-a.target-helper=lioadm \
+  lvm-san.backend-a.lvm-type=thin \
+  lvm-san.backend-a.lvm-pool-name=cinder-thin
+```
+
 ### hitachi (backend)
 
 Configure one or more Hitachi VSP backends using the `hitachi.<backend-name>.*` namespace:

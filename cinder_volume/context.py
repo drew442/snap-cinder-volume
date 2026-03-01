@@ -406,3 +406,18 @@ class DellpowerstoreBackendContext(BaseBackendContext):
             }
         )
         return context
+
+
+class LvmSanBackendContext(BaseBackendContext):
+    """Render an LVM SAN backend stanza."""
+
+    def __init__(self, backend_name: str, backend_config: dict):
+        """Initialize with backend name and config."""
+        super().__init__(backend_name, backend_config)
+        self.supports_cluster = True
+
+    def context(self) -> dict:
+        """Return context for LVM SAN backend."""
+        ctx = dict(super().context())
+        ctx.setdefault("volume_driver", "cinder.volume.drivers.lvm.LVMVolumeDriver")
+        return ctx

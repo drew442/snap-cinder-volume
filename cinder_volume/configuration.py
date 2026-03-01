@@ -212,6 +212,27 @@ class DellpowerstoreConfiguration(BaseBackendConfiguration):
     protocol: str = Field(default="fc", pattern="^(iscsi|fc)$")
 
 
+class LVMSANConfiguration(BaseBackendConfiguration):
+    """Configuration for LVM SAN backend."""
+
+    model_config = pydantic.ConfigDict(
+        extra="allow",  # Allow additional Cinder LVM driver options
+        alias_generator=pydantic.AliasGenerator(
+            validation_alias=to_kebab,
+            serialization_alias=pydantic.alias_generators.to_snake,
+        ),
+    )
+
+    volume_driver: str = "cinder.volume.drivers.lvm.LVMVolumeDriver"
+    volume_group: str
+    target_protocol: str = "iscsi"
+    target_helper: str = "lioadm"
+    iscsi_ip_address: str
+    lvm_type: str | None = None
+    lvm_pool_name: str | None = None
+    backend_availability_zone: str | None = None
+
+
 class Configuration(BaseConfiguration):
     """Holding additional configuration for the generic snap.
 
@@ -224,6 +245,7 @@ class Configuration(BaseConfiguration):
     pure: dict[str, PureConfiguration] = {}
     dellsc: dict[str, DellSCConfiguration] = {}
     dellpowerstore: dict[str, DellpowerstoreConfiguration] = {}
+    lvm_san: dict[str, LVMSANConfiguration] = {}
 
     @pydantic.model_validator(mode="after")
     def validate_unique_backend_names(self):
@@ -237,6 +259,7 @@ class Configuration(BaseConfiguration):
             ("hitachi", self.hitachi),
             ("pure", self.pure),
             ("dellsc", self.dellsc),
+            ("lvm-san", self.lvm_san),
         ]:
             for backend_key, backend in backends.items():
                 # Check for duplicate backend names across all types

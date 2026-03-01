@@ -358,6 +358,40 @@ class TestBackendConditionals:
         ctx_backend_missing = {"cinder_backends": {"contexts": {}}}
         assert conditional(ctx_backend_missing) is False
 
+
+class TestLVMSANBackendContext:
+    """Test LVM SAN context rendering."""
+
+    def test_lvmsan_context_uses_lvm_driver_by_default(self):
+        """Test default LVM driver is set when not provided."""
+        backend_config = {
+            "volume_backend_name": "lvm-san.backend-a",
+            "volume_group": "cinder-volumes",
+            "iscsi_ip_address": "10.20.30.40",
+            "target_helper": "lioadm",
+            "target_protocol": "iscsi",
+        }
+        ctx = context.LvmSanBackendContext("backend-a", backend_config)
+        rendered = ctx.context()
+
+        assert rendered["volume_driver"] == "cinder.volume.drivers.lvm.LVMVolumeDriver"
+        assert rendered["volume_group"] == "cinder-volumes"
+        assert rendered["iscsi_ip_address"] == "10.20.30.40"
+        assert ctx.supports_cluster is True
+
+    def test_lvmsan_context_preserves_explicit_volume_driver(self):
+        """Test explicit volume_driver is preserved."""
+        backend_config = {
+            "volume_backend_name": "lvm-san.backend-b",
+            "volume_driver": "custom.driver",
+            "volume_group": "cinder-volumes",
+            "iscsi_ip_address": "10.20.30.41",
+        }
+        ctx = context.LvmSanBackendContext("backend-b", backend_config)
+        rendered = ctx.context()
+
+        assert rendered["volume_driver"] == "custom.driver"
+
     def test_backend_variable_set_with_empty_string(self):
         """Test that empty string is treated as False."""
         conditional = context.backend_variable_set("test-backend", "san_ip")

@@ -342,8 +342,13 @@ class GenericCinderVolume(CinderVolume[configuration.Configuration]):
                 if not isinstance(getattr(cfg, field_name), dict):
                     continue
 
-                # Get the context class name by convention: {Backend}BackendContext
-                context_class_name = f"{field_name.title()}BackendContext"
+                # Get context class by convention: {Backend}BackendContext
+                # e.g. dellpowerstore -> DellpowerstoreBackendContext
+                #      lvm_san -> LvmSanBackendContext
+                context_class_name = (
+                    "".join(part.capitalize() for part in field_name.split("_"))
+                    + "BackendContext"
+                )
 
                 # Get the context class from the context module
                 if hasattr(context, context_class_name):

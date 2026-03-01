@@ -152,3 +152,48 @@ class TestDellSCConfiguration:
         )
         assert str(config.san_ip) == "10.0.0.10"
         assert config.dell_sc_ssn == 64702
+
+
+class TestLVMSANConfiguration:
+    """Test the LVMSANConfiguration class."""
+
+    def test_lvmsan_requires_minimum_fields(self):
+        """Test required fields for lvm-san backend."""
+        with pytest.raises(pydantic.ValidationError):
+            configuration.LVMSANConfiguration(
+                **{
+                    "volume-backend-name": "lvm-san.a",
+                    "volume-group": "cinder-volumes",
+                }
+            )
+
+    def test_lvmsan_accepts_valid_configuration(self):
+        """Test valid lvm-san backend configuration."""
+        config = configuration.LVMSANConfiguration(
+            **{
+                "volume-backend-name": "lvm-san.a",
+                "volume-group": "cinder-volumes",
+                "iscsi-ip-address": "10.20.30.40",
+                "target-helper": "lioadm",
+                "target-protocol": "iscsi",
+                "lvm-type": "thin",
+                "lvm-pool-name": "cinder-thin",
+            }
+        )
+        assert config.volume_backend_name == "lvm-san.a"
+        assert config.volume_group == "cinder-volumes"
+        assert config.iscsi_ip_address == "10.20.30.40"
+        assert config.volume_driver == "cinder.volume.drivers.lvm.LVMVolumeDriver"
+
+    def test_lvmsan_defaults_are_set(self):
+        """Test lvm-san defaults for driver and target settings."""
+        config = configuration.LVMSANConfiguration(
+            **{
+                "volume-backend-name": "lvm-san.b",
+                "volume-group": "cinder-volumes",
+                "iscsi-ip-address": "10.20.30.41",
+            }
+        )
+        assert config.volume_driver == "cinder.volume.drivers.lvm.LVMVolumeDriver"
+        assert config.target_helper == "lioadm"
+        assert config.target_protocol == "iscsi"
